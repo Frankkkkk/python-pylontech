@@ -15,9 +15,17 @@ class DivideBy1000(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
         return obj / 1000
 
-class ByteArrayToVolt(construct.Adapter):
+class DivideBy100(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
-        raise Exception('unimpl')
+        return obj / 100
+
+class ToVolt(construct.Adapter):
+    def _decode(self, obj, context, path) -> float:
+        return obj / 1000
+
+class ToCelsius(construct.Adapter):
+    def _decode(self, obj, context, path) -> float:
+        return obj / 100
 
 
 
@@ -30,22 +38,18 @@ class Pylontech:
     )
 
     system_parameters_fmt = construct.Struct(  # XXX Yields invalid parsing
-        "CellHighVoltageLimit" / construct.Int16sb,
-        #"CellHighVoltageLimit" / construct.Array(2, construct.Byte),
-        "CellLowVoltageLimit" / construct.Int16sb,
-        #"CellLowVoltageLimit" / construct.Array(2, construct.Byte),
-        "CellUnderVoltageLimit" / construct.Int16sb,
-        #"CellUnderVoltageLimit" / construct.Array(2, construct.Byte),
-        "ChargeHighTemperatureLimit" / construct.Int16sb,
-        "ChargeLowTemperatureLimit" / construct.Int16sb,
-        "ChargeCurrentLimit" / construct.Array(2, construct.Byte),
-        "ModuleHighVoltageLimit" / construct.Array(2, construct.Byte),
-        "ModuleLowVoltageLimit" / construct.Array(2, construct.Byte),
-        "ModuleUnderVoltageLimit" / construct.Array(2, construct.Byte),
-        "DischargeHighTemperatureLimit" / construct.Array(2, construct.Byte),
-        "DischargeLowTemperatureLimit" / construct.Array(2, construct.Byte),
-        "DischargeCurrentLimit" / construct.Array(2, construct.Byte),
-        "GREEDY" / JoinBytes(construct.GreedyRange(construct.Byte)),
+        "CellHighVoltageLimit" / ToVolt(construct.Int16ub),
+        "CellLowVoltageLimit" / ToVolt(construct.Int16ub),
+        "CellUnderVoltageLimit" / ToVolt(construct.Int16sb),
+        "ChargeHighTemperatureLimit" / ToCelsius(construct.Int16sb),
+        "ChargeLowTemperatureLimit" / ToCelsius(construct.Int16sb),
+        "ChargeCurrentLimit" / DivideBy100(construct.Int16sb),
+        "ModuleHighVoltageLimit" / ToVolt(construct.Int16ub),
+        "ModuleLowVoltageLimit" / ToVolt(construct.Int16ub),
+        "ModuleUnderVoltageLimit" / ToVolt(construct.Int16ub),
+        "DischargeHighTemperatureLimit" / ToCelsius(construct.Int16sb),
+        "DischargeLowTemperatureLimit" / ToCelsius(construct.Int16sb),
+        "DischargeCurrentLimit" / DivideBy100(construct.Int16sb),
     )
 
     management_info_fmt = construct.Struct(  # XXX Yields invalid parsing
@@ -66,14 +70,17 @@ class Pylontech:
 
     get_values_fmt = construct.Struct(  # XXX Yields invalid parsing
         "CommandValue" / construct.Byte,
-        "NumberOfCells" / construct.Byte,
-        "CellVoltages" / construct.Array(construct.this.NumberOfCells, construct.Array(3, construct.Byte)),
-        "NumberOfTemperatures" / construct.Byte,
-        "AverageBMSTemperature" / construct.Array(3, construct.Byte),
-        "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures-1, construct.Array(3, construct.Byte)),
+        "NumberOfCells" / construct.Int8ub,
+        "CellVoltages" / construct.Array(construct.this.NumberOfCells, ToVolt(construct.Int16sb)),
+        "NumberOfTemperatures" / construct.Int8ub,
+        "AverageBMSTemperature" / ToCelsius(construct.Int16sb),
+        "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures-1, ToCelsius(construct.Int16sb)),
         "Current" / construct.Int16ub,
-        "Voltage" / DivideBy1000(construct.Int16ub),
-        "FOOBAR" / construct.GreedyRange(construct.Byte),
+        "Voltage" / ToVolt(construct.Int16ub),
+        "RemainingCapacity" / DivideBy1000(construct.Int16ub),
+        "_undef1" / construct.Int8ub,
+        "TotalCapacity" / DivideBy1000(construct.Int16ub),
+        "CycleNumber" / construct.Int16ub,
     )
 
     def __init__(self):
