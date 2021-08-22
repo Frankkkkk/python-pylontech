@@ -103,25 +103,19 @@ class Pylontech:
 
     @staticmethod
     def get_info_length(info: bytes) -> int:
-        #print('HELLO')
         lenid = len(info)
         if lenid == 0:
             return 0
-        #print(f'LENID: {lenid}: {bin(lenid)}')
 
         lenid_sum = (lenid & 0xf) + ((lenid >> 4) & 0xf) + ((lenid >> 8) & 0xf)
-        #print(f'LSUM: {lenid_sum}: {bin(lenid_sum)}')
         lenid_modulo = lenid_sum % 16
-        #print(f' MOD: {lenid_modulo} - {bin(lenid_modulo)}')
         lenid_invert_plus_one = 0b1111 - lenid_modulo + 1
-        #print(f'invert plus one: {lenid_invert_plus_one}: {bin(lenid_invert_plus_one)}')
 
         return (lenid_invert_plus_one << 12) + lenid
 
 
     def send_cmd(self, address: int, cmd, info: bytes = b''):
         raw_frame = self._encode_cmd(address, cmd, info)
-        print(f">> {raw_frame}")
         self.s.write(raw_frame)
 
 
@@ -154,7 +148,7 @@ class Pylontech:
             "adr" / HexToByte(construct.Array(2, construct.Byte)),
             "cid1" / HexToByte(construct.Array(2, construct.Byte)),
             "cid2" / HexToByte(construct.Array(2, construct.Byte)),
-            "infolength" / HexToByte(construct.Array(2, construct.Byte)) + HexToByte(construct.Array(2, construct.Byte)),
+            "infolength" / HexToByte(construct.Array(4, construct.Byte)),
             "info" / HexToByte(construct.GreedyRange(construct.Byte)),
         )
 
@@ -164,7 +158,8 @@ class Pylontech:
     def read_frame(self):
         raw_frame = self.s.readline()
         f = self._decode_hw_frame(raw_frame=raw_frame)
-        return self._decode_frame(f)
+        parsed = self._decode_frame(f)
+        return parsed
 
 
 
@@ -185,9 +180,7 @@ class Pylontech:
         self.send_cmd(2, 0x47)
         f = self.read_frame()
 
-        print(f.info[1:])
         ff = self.system_parameters_fmt.parse(f.info[1:])
-        print(ff)
         return ff
 
     def get_management_info(self):
@@ -206,30 +199,25 @@ class Pylontech:
         f = self.read_frame()
 
         ff = self.module_serial_number_fmt.parse(f.info)
-        print('FOO')
-        print(ff.ModuleSerialNumber)
         return ff
 
     def get_values(self):
-        self.send_cmd(2, 0x42, b'\x01')
+        self.send_cmd(2, 0x42, b'FF')
         f = self.read_frame()
 
-        print(f.info[1:])
-
-        infoflag = f.info[0]
+        #infoflag = f.info[0]
         d = self.get_values_fmt.parse(f.info[1:])
-        print(d)
-        return None
+        return d
 
 
 if __name__ == '__main__':
     p = Pylontech()
     #print(p.get_protocol_version())
     #print(p.get_manufacturer_info())
-    print(p.get_system_parameters()) #  # XXX TO RETRY (INFOFLAG)
+    #p.get_system_parameters() #  # XXX TO RETRY (INFOFLAG)
     #p.get_management_info()
     #p.get_module_serial_number()
-    #p.get_values()
+    p.get_values()
     #il = Pylontech.get_info_length(b'111111111111111111')
     #print(il)
     #print(bin(il))
