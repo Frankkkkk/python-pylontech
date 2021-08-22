@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name = "python-pylontech",
-    version = "0.0.1",
+    version = "0.0.2",
     author = "Frank Villaro-Dixon",
     author_email = "frank@villaro-dixon.eu",
     description = ("Interfaces with Pylontech Batteries using RS485 protocol"),
