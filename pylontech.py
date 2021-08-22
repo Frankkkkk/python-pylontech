@@ -4,10 +4,8 @@ import construct
 
 class HexToByte(construct.Adapter):
     def _decode(self, obj, context, path) -> bytes:
-        # XXX This is pure pood
-        hexstr = [chr(x) for x in obj]
-        hex2 = [chr(int(''.join(hexstr[i:i+2]), 16)) for i in range(0, len(hexstr), 2)]
-        return ''.join(hex2).encode()
+        hexstr = ''.join([chr(x) for x in obj])
+        return bytes.fromhex(hexstr)
 
 class JoinBytes(construct.Adapter):
     def _decode(self, obj, context, path) -> bytes:
