@@ -30,14 +30,13 @@ class ToCelsius(construct.Adapter):
 
 
 class Pylontech:
-    # XXX Array(10, Bytes) -> Byte(10)
     manufacturer_info_fmt = construct.Struct(
         "DeviceName" / JoinBytes(construct.Array(10, construct.Byte)),
         "SoftwareVersion" / construct.Array(2, construct.Byte),
         "ManufacturerName" / JoinBytes(construct.GreedyRange(construct.Byte)),
     )
 
-    system_parameters_fmt = construct.Struct(  # XXX Yields invalid parsing
+    system_parameters_fmt = construct.Struct(
         "CellHighVoltageLimit" / ToVolt(construct.Int16ub),
         "CellLowVoltageLimit" / ToVolt(construct.Int16ub),
         "CellUnderVoltageLimit" / ToVolt(construct.Int16sb),
@@ -52,7 +51,7 @@ class Pylontech:
         "DischargeCurrentLimit" / DivideBy100(construct.Int16sb),
     )
 
-    management_info_fmt = construct.Struct(  # XXX Yields invalid parsing
+    management_info_fmt = construct.Struct(
         "CommandValue" / construct.Byte,
         "ChargeVoltageLimit" / construct.Array(2, construct.Byte),
         "DischargeVoltageLimit" / construct.Array(2, construct.Byte),
@@ -61,14 +60,13 @@ class Pylontech:
         "Status" / construct.Byte,
     )
 
-    module_serial_number_fmt = construct.Struct(  # XXX Yields invalid parsing
-        "CommandValue" / construct.Array(1, construct.Byte),
-        "Dummy" / construct.Array(2, construct.Byte),
-        "ModuleSerialNumber" / JoinBytes(construct.Array(14, construct.Byte)),
+    module_serial_number_fmt = construct.Struct(
+        "CommandValue" / construct.Byte,
+        "ModuleSerialNumber" / JoinBytes(construct.Array(16, construct.Byte)),
     )
 
 
-    get_values_fmt = construct.Struct(  # XXX Yields invalid parsing
+    get_values_fmt = construct.Struct(
         "CommandValue" / construct.Byte,
         "NumberOfCells" / construct.Int8ub,
         "CellVoltages" / construct.Array(construct.this.NumberOfCells, ToVolt(construct.Int16sb)),
@@ -96,7 +94,6 @@ class Pylontech:
         for byte in frame:
             sum += byte
         sum = ~sum
-        #sum &= 0xFFFF
         sum %= 0x10000
         sum += 1
         return sum
@@ -165,23 +162,19 @@ class Pylontech:
 
     def get_protocol_version(self):
         self.send_cmd(0, 0x4f)
-        f = self.read_frame()
-        return f.ver
+        return self.read_frame()
 
 
     def get_manufacturer_info(self):
         self.send_cmd(0, 0x51)
         f = self.read_frame()
-        ff = self.manufacturer_info_fmt.parse(f.info)
-        return ff
+        return self.manufacturer_info_fmt.parse(f.info)
 
 
     def get_system_parameters(self):
         self.send_cmd(2, 0x47)
         f = self.read_frame()
-
-        ff = self.system_parameters_fmt.parse(f.info[1:])
-        return ff
+        return self.system_parameters_fmt.parse(f.info[1:])
 
     def get_management_info(self):
         raise Exception('Dont touch this for now')
@@ -197,9 +190,8 @@ class Pylontech:
     def get_module_serial_number(self):
         self.send_cmd(2, 0x93)
         f = self.read_frame()
-
-        ff = self.module_serial_number_fmt.parse(f.info)
-        return ff
+        infoflag = f.info[0]
+        return self.module_serial_number_fmt.parse(f.info[0:])
 
     def get_values(self):
         self.send_cmd(2, 0x42, b'FF')
@@ -214,10 +206,7 @@ if __name__ == '__main__':
     p = Pylontech()
     #print(p.get_protocol_version())
     #print(p.get_manufacturer_info())
-    #p.get_system_parameters() #  # XXX TO RETRY (INFOFLAG)
-    #p.get_management_info()
-    #p.get_module_serial_number()
-    p.get_values()
-    #il = Pylontech.get_info_length(b'111111111111111111')
-    #print(il)
-    #print(bin(il))
+    #print(p.get_system_parameters())
+    #print(p.get_management_info())
+    #print(p.get_module_serial_number())
+    print(p.get_values())
