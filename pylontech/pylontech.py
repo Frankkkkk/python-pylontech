@@ -67,18 +67,20 @@ class Pylontech:
 
 
     get_values_fmt = construct.Struct(
-        "CommandValue" / construct.Byte,
-        "NumberOfCells" / construct.Int8ub,
-        "CellVoltages" / construct.Array(construct.this.NumberOfCells, ToVolt(construct.Int16sb)),
-        "NumberOfTemperatures" / construct.Int8ub,
-        "AverageBMSTemperature" / ToCelsius(construct.Int16sb),
-        "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures-1, ToCelsius(construct.Int16sb)),
-        "Current" / construct.Int16ub,
-        "Voltage" / ToVolt(construct.Int16ub),
-        "RemainingCapacity" / DivideBy1000(construct.Int16ub),
-        "_undef1" / construct.Int8ub,
-        "TotalCapacity" / DivideBy1000(construct.Int16ub),
-        "CycleNumber" / construct.Int16ub,
+        "NumberOfModules" / construct.Byte,
+        "Module" / construct.Array(construct.this.NumberOfModules, construct.Struct(
+            "NumberOfCells" / construct.Int8ub,
+            "CellVoltages" / construct.Array(construct.this.NumberOfCells, ToVolt(construct.Int16sb)),
+            "NumberOfTemperatures" / construct.Int8ub,
+            "AverageBMSTemperature" / ToCelsius(construct.Int16sb),
+            "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures-1, ToCelsius(construct.Int16sb)),
+            "Current" / construct.Int16ub,
+            "Voltage" / ToVolt(construct.Int16ub),
+            "RemainingCapacity" / DivideBy1000(construct.Int16ub),
+            "_undef1" / construct.Int8ub,
+            "TotalCapacity" / DivideBy1000(construct.Int16ub),
+            "CycleNumber" / construct.Int16ub,
+        ))
     )
 
     def __init__(self):
