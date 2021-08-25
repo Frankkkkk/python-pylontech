@@ -74,7 +74,7 @@ class Pylontech:
             "NumberOfTemperatures" / construct.Int8ub,
             "AverageBMSTemperature" / ToCelsius(construct.Int16sb),
             "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures-1, ToCelsius(construct.Int16sb)),
-            "Current" / construct.Int16ub,
+            "Current" / construct.Int16sb,
             "Voltage" / ToVolt(construct.Int16ub),
             "RemainingCapacity" / DivideBy1000(construct.Int16ub),
             "_undef1" / construct.Int8ub,
