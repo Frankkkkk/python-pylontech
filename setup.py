@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="python-pylontech",
-    version="0.0.3",
+    version="0.0.4",
     author="Frank Villaro-Dixon",
     author_email="frank@villaro-dixon.eu",
     description=("Interfaces with Pylontech Batteries using RS485 protocol"),
