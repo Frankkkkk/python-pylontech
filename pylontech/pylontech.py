@@ -1,23 +1,27 @@
-from construct.core import FormatField
 import serial
 import construct
+
 
 class HexToByte(construct.Adapter):
     def _decode(self, obj, context, path) -> bytes:
         hexstr = ''.join([chr(x) for x in obj])
         return bytes.fromhex(hexstr)
 
+
 class JoinBytes(construct.Adapter):
     def _decode(self, obj, context, path) -> bytes:
         return ''.join([chr(x) for x in obj]).encode()
+
 
 class DivideBy1000(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
         return obj / 1000
 
+
 class DivideBy100(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
         return obj / 100
+
 
 class ToVolt(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
@@ -77,7 +81,7 @@ class Pylontech:
             "CellVoltages" / construct.Array(construct.this.NumberOfCells, ToVolt(construct.Int16sb)),
             "NumberOfTemperatures" / construct.Int8ub,
             "AverageBMSTemperature" / ToCelsius(construct.Int16sb),
-            "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures-1, ToCelsius(construct.Int16sb)),
+            "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures - 1, ToCelsius(construct.Int16sb)),
             "Current" / ToAmp(construct.Int16sb),
             "Voltage" / ToVolt(construct.Int16ub),
             "Power" / construct.Computed(construct.this.Current * construct.this.Voltage),
@@ -138,8 +142,8 @@ class Pylontech:
 
     def _decode_hw_frame(self, raw_frame: bytes) -> bytes:
         # XXX construct
-        frame_data = raw_frame[1:len(raw_frame)-5]
-        frame_chksum = raw_frame[len(raw_frame)-5:-1]
+        frame_data = raw_frame[1:len(raw_frame) - 5]
+        frame_chksum = raw_frame[len(raw_frame) - 5:-1]
 
         got_frame_checksum = Pylontech.get_frame_checksum(frame_data)
         assert got_frame_checksum == int(frame_chksum, 16)
@@ -197,23 +201,24 @@ class Pylontech:
     def get_module_serial_number(self):
         self.send_cmd(2, 0x93)
         f = self.read_frame()
-        infoflag = f.info[0]
+        # infoflag = f.info[0]
         return self.module_serial_number_fmt.parse(f.info[0:])
 
     def get_values(self):
         self.send_cmd(2, 0x42, b'FF')
         f = self.read_frame()
 
-        #infoflag = f.info[0]
+        # infoflag = f.info[0]
         d = self.get_values_fmt.parse(f.info[1:])
         return d
 
 
 if __name__ == '__main__':
     p = Pylontech()
-    #print(p.get_protocol_version())
-    #print(p.get_manufacturer_info())
-    #print(p.get_system_parameters())
-    #print(p.get_management_info())
-    #print(p.get_module_serial_number())
+    # print(p.get_protocol_version())
+    # print(p.get_manufacturer_info())
+    # print(p.get_system_parameters())
+    # print(p.get_management_info())
+    # print(p.get_module_serial_number())
     print(p.get_values())
+
