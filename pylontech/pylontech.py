@@ -23,6 +23,10 @@ class ToVolt(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
         return obj / 1000
 
+class ToAmp(construct.Adapter):
+    def _decode(self, obj, context, path) -> float:
+        return obj / 10
+
 class ToCelsius(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
         return obj / 100
@@ -74,7 +78,7 @@ class Pylontech:
             "NumberOfTemperatures" / construct.Int8ub,
             "AverageBMSTemperature" / ToCelsius(construct.Int16sb),
             "GroupedCellsTemperatures" / construct.Array(construct.this.NumberOfTemperatures-1, ToCelsius(construct.Int16sb)),
-            "Current" / construct.Int16ub,
+            "Current" / ToAmp(construct.Int16sb),
             "Voltage" / ToVolt(construct.Int16ub),
             "RemainingCapacity" / DivideBy1000(construct.Int16ub),
             "_undef1" / construct.Int8ub,
