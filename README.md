@@ -69,3 +69,15 @@ Container:
 
 ## Dependencies
 This lib depends on `pyserial` and the awesome `construct` lib.
+
+# Hardware wiring
+The pylontech modules talk using the RS485 line protocol.
+## Pylontech side
+The first DIP switch on the pylontech indicates the line speed. It must be off (`0`, down position) so that the speed is set to 115200 Bd.
+
+The RS485 port is exposed on the pins 7 & 8 on the RJ45 connector names `RS485`.
+
+## Client side
+Any RS485 to USB (TCP/IP not yet supported) converter should would. You just have to wire the two pins above to the `A` and `B` ports (swap them around if it doesn't work). of your converter.
+
+I personally use cheap chinese "RS485 to USB" converters worth a couple of bucks each.
