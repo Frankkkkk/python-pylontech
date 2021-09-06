@@ -13,37 +13,44 @@ Then, you simply need to import the lib and start asking values:
 >>> import pylontech
 >>> p = pylontech.Pylontech()
 >>> print(p.get_values())
-Container: 
-    CommandValue = 1
-    NumberOfCells = 15
-    CellVoltages = ListContainer: 
-        3.325
-        3.326
-        3.325
-        3.325
-        3.325
-        3.325
-        3.325
-        3.324
-        3.324
-        3.324
-        3.326
-        3.326
-        3.326
-        3.326
-        3.326
-    NumberOfTemperatures = 5
-    AverageBMSTemperature = 30.01
-    GroupedCellsTemperatures = ListContainer: 
-        29.61
-        29.61
-        29.61
-        29.61
-    Current = 0
-    Voltage = 49.878
-    RemainingCapacity = 49.0
-    TotalCapacity = 50.0
-    CycleNumber = 0
+Container:
+    NumberOfModules = 3
+    Module = ListContainer:
+        Container:
+            NumberOfCells = 15
+            CellVoltages = ListContainer:
+                3.306
+                3.307
+                3.305
+                3.305
+                3.306
+                3.305
+                3.304
+                3.305
+                3.306
+                3.306
+                3.307
+                3.307
+                3.308
+                3.307
+                3.306
+            NumberOfTemperatures = 5
+            AverageBMSTemperature = 29.81
+            GroupedCellsTemperatures = ListContainer:
+                29.61
+                29.61
+                29.61
+                29.61
+            Current = -3.5
+            Voltage = 49.59
+            Power = -173.565
+            RemainingCapacity = 39.5
+            TotalCapacity = 50.0
+            CycleNumber = 5
+    -->8-- SNIP -->8--
+    TotalPower = -525.8022
+    StateOfCharge = 0.79
+
 >>> print(p.get_system_parameters())
 Container: 
     CellHighVoltageLimit = 3.7

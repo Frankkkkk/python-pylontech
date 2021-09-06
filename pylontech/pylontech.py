@@ -89,7 +89,10 @@ class Pylontech:
             "_undef1" / construct.Int8ub,
             "TotalCapacity" / DivideBy1000(construct.Int16ub),
             "CycleNumber" / construct.Int16ub,
-        ))
+        )),
+        "TotalPower" / construct.Computed(lambda this: sum([x.Power for x in this.Module])),
+        "StateOfCharge" / construct.Computed(lambda this: sum([x.RemainingCapacity for x in this.Module]) / sum([x.TotalCapacity for x in this.Module])),
+
     )
 
     def __init__(self, serial_port='/dev/ttyUSB0', baudrate=115200):
