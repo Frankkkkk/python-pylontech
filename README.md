@@ -68,6 +68,8 @@ Container:
 ```
 
 ## Dependencies
+`python-pylontech` needs python 3.5 or greater (but please, use at least 3.7 or more if possible to be future-proof).
+
 This lib depends on `pyserial` and the awesome `construct` lib.
 
 # Hardware wiring
