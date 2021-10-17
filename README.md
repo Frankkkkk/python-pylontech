@@ -83,3 +83,7 @@ The RS485 port is exposed on the pins 7 & 8 on the RJ45 connector names `RS485`.
 Any RS485 to USB (TCP/IP not yet supported) converter should would. You just have to wire the two pins above to the `A` and `B` ports (swap them around if it doesn't work). of your converter.
 
 I personally use cheap chinese "RS485 to USB" converters worth a couple of bucks each.
+
+# Known bugs
+## Mixing between US2000 and US3000
+If you are using US2000 and US3000 batteries, then the main battery must be a US2000. Please see bug https://github.com/Frankkkkk/python-pylontech/issues/2#issuecomment-915966564 for more information
