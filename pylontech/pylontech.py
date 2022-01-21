@@ -109,7 +109,7 @@ class Pylontech:
         "CycleNumber" / construct.Int16ub,
     )
 
-    def __init__(self, serial_port='/dev/ttyUSB1', baudrate=115200):
+    def __init__(self, serial_port='/dev/ttyUSB0', baudrate=115200):
         self.s = serial.Serial(serial_port, baudrate, bytesize=8, parity=serial.PARITY_NONE, stopbits=1, timeout=2)
 
 
@@ -244,5 +244,6 @@ if __name__ == '__main__':
     # print(p.get_system_parameters())
     # print(p.get_management_info())
     # print(p.get_module_serial_number())
+    # print(p.get_values())
     print(p.get_values_single(2))
 
