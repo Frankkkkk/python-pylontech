@@ -86,13 +86,18 @@ class Pylontech:
             "Voltage" / ToVolt(construct.Int16ub),
             "Power" / construct.Computed(construct.this.Current * construct.this.Voltage),
             "RemainingCapacity" / DivideBy1000(construct.Int16ub),
-            "_undef1" / construct.Int8ub,
+            "UserDefinedItems" / construct.Int8ub,
             "TotalCapacity" / DivideBy1000(construct.Int16ub),
             "CycleNumber" / construct.Int16ub,
+            "US3000" / construct.If(construct.this.UserDefinedItems > 2,
+                "Capacity" / construct.Struct(
+                    "Remaining" / DivideBy1000(construct.Int24ub),
+                    "Total" / DivideBy1000(construct.Int24ub),
+                )
+            ),
         )),
         "TotalPower" / construct.Computed(lambda this: sum([x.Power for x in this.Module])),
         "StateOfCharge" / construct.Computed(lambda this: sum([x.RemainingCapacity for x in this.Module]) / sum([x.TotalCapacity for x in this.Module])),
-
     )
     get_values_single_fmt = construct.Struct(
         "NumberOfModule" / construct.Byte,
