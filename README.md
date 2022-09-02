@@ -80,10 +80,26 @@ The first DIP switch on the pylontech indicates the line speed. It must be off (
 The RS485 port is exposed on the pins 7 & 8 on the RJ45 connector names `RS485`.
 
 ## Client side
-Any RS485 to USB (TCP/IP not yet supported) converter should would. You just have to wire the two pins above to the `A` and `B` ports (swap them around if it doesn't work). of your converter.
+
+### USB to RS485
+Any RS485 to USB converter should would. You just have to wire the two pins above to the `A` and `B` ports (swap them around if it doesn't work). of your converter.
 
 I personally use cheap chinese "RS485 to USB" converters worth a couple of bucks each.
+
+### TCP/IP
+If you are using a Ethernet to RS485 bridge, connect as for USB and run the following command (Linux only) for creating a virtual serial port. Then run the python script with adapted serial parameter in the constructor.
+
+`socat pty,link=$HOME/bat2,waitslave tcp:<IP_ADDRESS>:<PORT>`
+
+This is tested with an USR-N540
 
 # Known bugs
 ## Mixing between US2000 and US3000
 If you are using US2000 and US3000 batteries, then the main battery must be a US2000. Please see bug https://github.com/Frankkkkk/python-pylontech/issues/2#issuecomment-915966564 for more information
+
+
+# FAQ
+
+## Using Pylontech LV Hub with multible battery banks
+
+If the LV hub is used the address of the RS485 devices is depending on the battery bank. To read values the specific device address is needed. To scan for devices on a bank you can use the `scan_for_batteries` function. The max range is 0 to 255.
