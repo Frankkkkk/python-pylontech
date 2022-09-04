@@ -85,10 +85,15 @@ class Pylontech:
             "Current" / ToAmp(construct.Int16sb),
             "Voltage" / ToVolt(construct.Int16ub),
             "Power" / construct.Computed(construct.this.Current * construct.this.Voltage),
-            "RemainingCapacity" / DivideBy1000(construct.Int16ub),
-            "_undef1" / construct.Int8ub,
-            "TotalCapacity" / DivideBy1000(construct.Int16ub),
+            "_RemainingCapacity1" / DivideBy1000(construct.Int16ub),
+            "_UserDefinedItems" / construct.Int8ub,
+            "_TotalCapacity1" / DivideBy1000(construct.Int16ub),
             "CycleNumber" / construct.Int16ub,
+            "_OptionalFields" / construct.If(construct.this._UserDefinedItems > 2,
+                                           construct.Struct("RemainingCapacity2" / DivideBy1000(construct.Int24ub),
+                                                            "TotalCapacity2" / DivideBy1000(construct.Int24ub))),
+            "RemainingCapacity" / construct.Computed(lambda this: this._OptionalFields.RemainingCapacity2 if this._UserDefinedItems > 2 else this._RemainingCapacity1),
+            "TotalCapacity" / construct.Computed(lambda this: this._OptionalFields.TotalCapacity2 if this._UserDefinedItems > 2 else this._TotalCapacity1),
         )),
         "TotalPower" / construct.Computed(lambda this: sum([x.Power for x in this.Module])),
         "StateOfCharge" / construct.Computed(lambda this: sum([x.RemainingCapacity for x in this.Module]) / sum([x.TotalCapacity for x in this.Module])),
@@ -104,9 +109,17 @@ class Pylontech:
         "Current" / ToAmp(construct.Int16sb),
         "Voltage" / ToVolt(construct.Int16ub),
         "Power" / construct.Computed(construct.this.Current * construct.this.Voltage),
-        "RemainingCapacity" / DivideBy1000(construct.Int16ub),
-        "TotalCapacity" / DivideBy1000(construct.Int16ub),
+        "_RemainingCapacity1" / DivideBy1000(construct.Int16ub),
+        "_UserDefinedItems" / construct.Int8ub,
+        "_TotalCapacity1" / DivideBy1000(construct.Int16ub),
         "CycleNumber" / construct.Int16ub,
+        "_OptionalFields" / construct.If(construct.this._UserDefinedItems > 2,
+                                       construct.Struct("RemainingCapacity2" / DivideBy1000(construct.Int24ub),
+                                                        "TotalCapacity2" / DivideBy1000(construct.Int24ub))),
+        "RemainingCapacity" / construct.Computed(lambda this: this._OptionalFields.RemainingCapacity2 if this._UserDefinedItems > 2 else this._RemainingCapacity1),
+        "TotalCapacity" / construct.Computed(lambda this: this._OptionalFields.TotalCapacity2 if this._UserDefinedItems > 2 else this._TotalCapacity1),
+        "TotalPower" / construct.Computed(construct.this.Power),
+        "StateOfCharge" / construct.Computed(construct.this.RemainingCapacity / construct.this.TotalCapacity),
     )
 
     def __init__(self, serial_port='/dev/ttyUSB0', baudrate=115200):
@@ -246,4 +259,3 @@ if __name__ == '__main__':
     # print(p.get_module_serial_number())
     # print(p.get_values())
     print(p.get_values_single(2))
-
