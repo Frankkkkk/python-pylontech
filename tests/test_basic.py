@@ -276,6 +276,84 @@ def test_us3000_4modules_info_parsing_1():
     assert d.StateOfCharge == approx(0.8225)
 
 
+def test_mixed_us3000_us2000_status_info_parsing_1():
+
+    p = Pylontech(
+        [
+            b"~2002460010F011020F0CCD0CCE0CCC0CCE0CCB0CCC0CCD0CCC0CCD0CCB0CCC0CCD0CCD0CCE0CCC050BE10BCD0BCD0BD70BCDFFC3BFFDFFFF04FFFF0234007F300121100F0CCA0CCA0CCB0CCC0CCA0CCC0CCB0CCB0CCB0CCB0CCB0CCA0CCC0CCC0CCB050BEB0BCD0BCD0BCD0BC3FFD1BFE5FFFF04FFFF0292005FB400C350C4A7\r"
+        ]
+    )
+
+    d = p.get_values()
+    print(d)
+
+    assert d.NumberOfModules == 2
+    m = d.Module[0]  # US3000
+    assert m.NumberOfCells == 15
+    assert m.CellVoltages == approx(
+        [
+            3.277,
+            3.278,
+            3.276,
+            3.278,
+            3.275,
+            3.276,
+            3.277,
+            3.276,
+            3.277,
+            3.275,
+            3.276,
+            3.277,
+            3.277,
+            3.278,
+            3.276,
+        ]
+    )
+    assert m.NumberOfTemperatures == 5
+    assert m.GroupedCellsTemperatures == approx([30.21, 30.21, 30.31, 30.21])
+    assert m.Current == approx(-6.1)
+    assert m.Voltage == approx(49.149)
+    assert m.Power == m.Current * m.Voltage
+    assert m.CycleNumber == 564
+    assert m.AverageBMSTemperature == approx(30.41)
+    assert m.RemainingCapacity == approx(32.56)
+    assert m.TotalCapacity == approx(74)
+
+    m = d.Module[1]  # US2000
+    assert m.NumberOfCells == 15
+    assert m.CellVoltages == approx(
+        [
+            3.274,
+            3.274,
+            3.275,
+            3.276,
+            3.274,
+            3.276,
+            3.275,
+            3.275,
+            3.275,
+            3.275,
+            3.275,
+            3.274,
+            3.276,
+            3.276,
+            3.275,
+        ]
+    )
+    assert m.NumberOfTemperatures == 5
+    assert m.GroupedCellsTemperatures == approx([30.21, 30.21, 30.21, 30.11])
+    assert m.Current == approx(-4.7)
+    assert m.Voltage == approx(49.125)
+    assert m.Power == m.Current * m.Voltage
+    assert m.CycleNumber == 658
+    assert m.AverageBMSTemperature == approx(30.51)
+    assert m.RemainingCapacity == approx(24.5)
+    assert m.TotalCapacity == approx(50)
+
+    assert d.TotalPower == approx(-530.6964)
+    assert d.StateOfCharge == approx(0.460161)
+
+
 def test_up2500_1module_status_info_parsing_1():
     p = Pylontech(
         [
