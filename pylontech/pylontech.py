@@ -33,7 +33,7 @@ class ToAmp(construct.Adapter):
 
 class ToCelsius(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
-        return obj / 100
+        return (obj - 2731) / 10.0  # in Kelvin*10
 
 
 

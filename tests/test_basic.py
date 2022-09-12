@@ -61,12 +61,12 @@ def test_us2000_3modules_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([29.51, 29.51, 29.51, 29.51])
+    assert m.GroupedCellsTemperatures == approx([22.0, 22.0, 22.0, 22.0])
     assert m.Current == approx(-2.6)
     assert m.Voltage == approx(49.545)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 31
-    assert m.AverageBMSTemperature == approx(29.61)
+    assert m.AverageBMSTemperature == approx(23.0)
     assert m.RemainingCapacity == approx(33.5)
     assert m.TotalCapacity == approx(50)
 
@@ -92,12 +92,12 @@ def test_us2000_3modules_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([29.51, 29.51, 29.51, 29.51])
+    assert m.GroupedCellsTemperatures == approx([22.0, 22.0, 22.0, 22.0])
     assert m.Current == approx(-2.5)
     assert m.Voltage == approx(49.52)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 31
-    assert m.AverageBMSTemperature == approx(29.61)
+    assert m.AverageBMSTemperature == approx(23.0)
     assert m.RemainingCapacity == approx(33.5)
     assert m.TotalCapacity == approx(50)
 
@@ -123,12 +123,12 @@ def test_us2000_3modules_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([29.41, 29.41, 29.41, 29.41])
+    assert m.GroupedCellsTemperatures == approx([21.0, 21.0, 21.0, 21.0])
     assert m.Current == approx(-2.7)
     assert m.Voltage == approx(49.504)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 31
-    assert m.AverageBMSTemperature == approx(29.61)
+    assert m.AverageBMSTemperature == approx(23.0)
     assert m.RemainingCapacity == approx(33.5)
     assert m.TotalCapacity == approx(50)
 
@@ -170,12 +170,12 @@ def test_us3000_4modules_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([30.21, 30.21, 30.21, 30.21])
+    assert m.GroupedCellsTemperatures == approx([29.0, 29.0, 29.0, 29.0])
     assert m.Current == approx(0)  # really??
     assert m.Voltage == approx(49.857)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 47
-    assert m.AverageBMSTemperature == approx(30.41)
+    assert m.AverageBMSTemperature == approx(31.0)
     assert m.RemainingCapacity == approx(61.42)
     assert m.TotalCapacity == approx(74)
 
@@ -201,12 +201,12 @@ def test_us3000_4modules_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([30.21, 30.21, 30.21, 30.21])
+    assert m.GroupedCellsTemperatures == approx([29.0, 29.0, 29.0, 29.0])
     assert m.Current == approx(-6.8)
     assert m.Voltage == approx(49.586)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 40
-    assert m.AverageBMSTemperature == approx(30.41)
+    assert m.AverageBMSTemperature == approx(31.0)
     assert m.RemainingCapacity == approx(62.16)
     assert m.TotalCapacity == approx(74)
 
@@ -232,12 +232,12 @@ def test_us3000_4modules_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([30.11, 30.11, 30.11, 30.11])
+    assert m.GroupedCellsTemperatures == approx([28.0, 28.0, 28.0, 28.0])
     assert m.Current == approx(-7.3)
     assert m.Voltage == approx(49.592)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 113
-    assert m.AverageBMSTemperature == approx(30.41)
+    assert m.AverageBMSTemperature == approx(31.0)
     assert m.RemainingCapacity == approx(59.2)
     assert m.TotalCapacity == approx(74)
 
@@ -263,12 +263,12 @@ def test_us3000_4modules_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([30.11, 30.11, 30.11, 30.01])
+    assert m.GroupedCellsTemperatures == approx([28.0, 28.0, 28.0, 27.0])
     assert m.Current == approx(-6.9)
     assert m.Voltage == approx(49.593)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 107
-    assert m.AverageBMSTemperature == approx(30.31)
+    assert m.AverageBMSTemperature == approx(30.0)
     assert m.RemainingCapacity == approx(60.68)
     assert m.TotalCapacity == approx(74)
 
@@ -310,12 +310,12 @@ def test_mixed_us3000_us2000_status_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([30.21, 30.21, 30.31, 30.21])
+    assert m.GroupedCellsTemperatures == approx([29.0, 29.0, 30.0, 29.0])
     assert m.Current == approx(-6.1)
     assert m.Voltage == approx(49.149)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 564
-    assert m.AverageBMSTemperature == approx(30.41)
+    assert m.AverageBMSTemperature == approx(31.0)
     assert m.RemainingCapacity == approx(32.56)
     assert m.TotalCapacity == approx(74)
 
@@ -341,12 +341,12 @@ def test_mixed_us3000_us2000_status_info_parsing_1():
         ]
     )
     assert m.NumberOfTemperatures == 5
-    assert m.GroupedCellsTemperatures == approx([30.21, 30.21, 30.21, 30.11])
+    assert m.GroupedCellsTemperatures == approx([29.0, 29.0, 29.0, 28.0])
     assert m.Current == approx(-4.7)
     assert m.Voltage == approx(49.125)
     assert m.Power == m.Current * m.Voltage
     assert m.CycleNumber == 658
-    assert m.AverageBMSTemperature == approx(30.51)
+    assert m.AverageBMSTemperature == approx(32.0)
     assert m.RemainingCapacity == approx(24.5)
     assert m.TotalCapacity == approx(50)
 
@@ -368,12 +368,12 @@ def test_up2500_1module_status_info_parsing_1():
         [3.33, 3.33, 3.33, 3.331, 3.328, 3.329, 3.329, 3.331]
     )
     assert d.NumberOfTemperatures == 5
-    assert d.GroupedCellsTemperatures == approx([29.21, 29.21, 29.21, 29.31])
+    assert d.GroupedCellsTemperatures == approx([19.0, 19.0, 19.0, 20.0])
     assert d.Current == approx(-0.6)
     assert d.Voltage == approx(26.638)
     assert d.Power == d.Current * d.Voltage
     assert d.CycleNumber == 0
-    assert d.AverageBMSTemperature == approx(29.41)
+    assert d.AverageBMSTemperature == approx(21.0)
     assert d.RemainingCapacity == approx(95.460)
     assert d.TotalCapacity == approx(111)
     assert d.TotalPower == d.Power
