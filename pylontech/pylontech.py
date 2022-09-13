@@ -1,6 +1,9 @@
+from typing import Dict
+import logging
 import serial
 import construct
 
+logger = logging.getLogger(__name__)
 
 class HexToByte(construct.Adapter):
     def _decode(self, obj, context, path) -> bytes:
@@ -199,6 +202,25 @@ class Pylontech:
         return parsed
 
 
+    def scan_for_batteries(self, start=0, end=255) -> Dict[int, str]:
+        """ Returns a map of the batteries id to their serial number """
+        batteries = {}
+        for adr in range(start, end, 1):
+            bdevid = "{:02X}".format(adr).encode()
+            self.send_cmd(adr, 0x93, bdevid) # Probe for serial number
+            raw_frame = self.s.readline()
+
+            if raw_frame:
+                sn = self.get_module_serial_number(adr)
+                sn_str = sn["ModuleSerialNumber"].decode()
+
+                batteries[adr] = sn_str
+                logger.debug("Found battery at address " + str(adr) + " with serial " + sn_str)
+            else:
+                logger.debug("No battery found at address " + str(adr))
+
+        return batteries
+
 
     def get_protocol_version(self):
         self.send_cmd(0, 0x4f)
@@ -211,8 +233,13 @@ class Pylontech:
         return self.manufacturer_info_fmt.parse(f.info)
 
 
-    def get_system_parameters(self):
-        self.send_cmd(2, 0x47)
+    def get_system_parameters(self, dev_id=None):
+        if dev_id:
+            bdevid = "{:02X}".format(dev_id).encode()
+            self.send_cmd(dev_id, 0x47, bdevid)
+        else:
+            self.send_cmd(2, 0x47)
+
         f = self.read_frame()
         return self.system_parameters_fmt.parse(f.info[1:])
 
@@ -227,8 +254,13 @@ class Pylontech:
         print(ff)
         return ff
 
-    def get_module_serial_number(self):
-        self.send_cmd(2, 0x93)
+    def get_module_serial_number(self, dev_id=None):
+        if dev_id:
+            bdevid = "{:02X}".format(dev_id).encode()
+            self.send_cmd(dev_id, 0x93, bdevid)
+        else:
+            self.send_cmd(2, 0x93)
+
         f = self.read_frame()
         # infoflag = f.info[0]
         return self.module_serial_number_fmt.parse(f.info[0:])
