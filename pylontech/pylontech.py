@@ -1,6 +1,9 @@
+from typing import Dict
+import logging
 import serial
 import construct
 
+logger = logging.getLogger(__name__)
 
 class HexToByte(construct.Adapter):
     def _decode(self, obj, context, path) -> bytes:
@@ -185,6 +188,25 @@ class Pylontech:
         parsed = self._decode_frame(f)
         return parsed
 
+
+    def scan_for_batteries(self, start=0, end=255) -> Dict[int, str]:
+        """ Returns a map of the batteries id to their serial number """
+        batteries = {}
+        for adr in range(start, end, 1):
+            bdevid = "{:02X}".format(adr).encode()
+            self.send_cmd(adr, 0x93, bdevid) # Probe for serial number
+            raw_frame = self.s.readline()
+
+            if raw_frame:
+                sn = self.get_module_serial_number(adr)
+                sn_str = sn["ModuleSerialNumber"].decode()
+
+                batteries[adr] = sn_str
+                logger.debug("Found battery at address " + str(adr) + " with serial " + sn_str)
+            else:
+                logger.debug("No battery found at address " + str(adr))
+
+        return batteries
 
 
     def get_protocol_version(self):
