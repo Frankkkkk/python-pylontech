@@ -198,8 +198,13 @@ class Pylontech:
         return self.manufacturer_info_fmt.parse(f.info)
 
 
-    def get_system_parameters(self):
-        self.send_cmd(2, 0x47)
+    def get_system_parameters(self, dev_id=None):
+        if dev_id:
+            bdevid = "{:02X}".format(dev_id).encode()
+            self.send_cmd(dev_id, 0x47, bdevid)
+        else:
+            self.send_cmd(2, 0x47)
+
         f = self.read_frame()
         return self.system_parameters_fmt.parse(f.info[1:])
 
@@ -214,8 +219,13 @@ class Pylontech:
         print(ff)
         return ff
 
-    def get_module_serial_number(self):
-        self.send_cmd(2, 0x93)
+    def get_module_serial_number(self, dev_id=None):
+        if dev_id:
+            bdevid = "{:02X}".format(dev_id).encode()
+            self.send_cmd(dev_id, 0x93, bdevid)
+        else:
+            self.send_cmd(2, 0x93)
+
         f = self.read_frame()
         # infoflag = f.info[0]
         return self.module_serial_number_fmt.parse(f.info[0:])
