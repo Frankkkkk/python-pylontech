@@ -25,6 +25,9 @@ class DivideBy100(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
         return obj / 100
 
+class DivideBy10(construct.Adapter):
+    def _decode(self, obj, context, path) -> float:
+        return obj / 10
 
 class ToVolt(construct.Adapter):
     def _decode(self, obj, context, path) -> float:
@@ -53,13 +56,13 @@ class Pylontech:
         "CellUnderVoltageLimit" / ToVolt(construct.Int16sb),
         "ChargeHighTemperatureLimit" / ToCelsius(construct.Int16sb),
         "ChargeLowTemperatureLimit" / ToCelsius(construct.Int16sb),
-        "ChargeCurrentLimit" / DivideBy100(construct.Int16sb),
+        "ChargeCurrentLimit" / DivideBy10(construct.Int16sb),
         "ModuleHighVoltageLimit" / ToVolt(construct.Int16ub),
         "ModuleLowVoltageLimit" / ToVolt(construct.Int16ub),
         "ModuleUnderVoltageLimit" / ToVolt(construct.Int16ub),
         "DischargeHighTemperatureLimit" / ToCelsius(construct.Int16sb),
         "DischargeLowTemperatureLimit" / ToCelsius(construct.Int16sb),
-        "DischargeCurrentLimit" / DivideBy100(construct.Int16sb),
+        "DischargeCurrentLimit" / DivideBy10(construct.Int16sb),
     )
 
     management_info_fmt = construct.Struct(
