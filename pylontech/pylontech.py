@@ -66,19 +66,31 @@ class Pylontech:
     )
 
     management_info_fmt = construct.Struct(
-        "CommandValue" / construct.Byte,
-        "ChargeVoltageLimit" / construct.Array(2, construct.Byte),
-        "DischargeVoltageLimit" / construct.Array(2, construct.Byte),
-        "ChargeCurrentLimit" / construct.Array(2, construct.Byte),
-        "DishargeCurrentLimit" / construct.Array(2, construct.Byte),
-        "Status" / construct.Byte,
+        "ChargeVoltageLimit" / DivideBy1000(construct.Int16sb),
+        "DischargeVoltageLimit" / DivideBy1000(construct.Int16sb),
+        "ChargeCurrentLimit" / ToAmp(construct.Int16sb),
+        "DischargeCurrentLimit" / ToAmp(construct.Int16sb),
+        "status"
+        / construct.BitStruct(
+            "ChargeEnable" / construct.Flag,
+            "DischargeEnable" / construct.Flag,
+            "ChargeImmediately2" / construct.Flag,
+            "ChargeImmediately1" / construct.Flag,
+            "FullChargeRequest" / construct.Flag,
+            "ShouldCharge"
+            / construct.Computed(
+                lambda this: this.ChargeImmediately2
+                | this.ChargeImmediately1
+                | this.FullChargeRequest
+            ),
+            "_padding" / construct.BitsInteger(3),
+        ),
     )
 
     module_serial_number_fmt = construct.Struct(
         "CommandValue" / construct.Byte,
         "ModuleSerialNumber" / JoinBytes(construct.Array(16, construct.Byte)),
     )
-
 
     get_values_fmt = construct.Struct(
         "NumberOfModules" / construct.Byte,
@@ -246,14 +258,14 @@ class Pylontech:
         f = self.read_frame()
         return self.system_parameters_fmt.parse(f.info[1:])
 
-    def get_management_info(self):
-        raise Exception('Dont touch this for now')
-        self.send_cmd(2, 0x92)
+    def get_management_info(self, dev_id):
+        bdevid = "{:02X}".format(dev_id).encode()
+        self.send_cmd(dev_id, 0x92, bdevid)
         f = self.read_frame()
 
         print(f.info)
         print(len(f.info))
-        ff = self.management_info_fmt.parse(f.info)
+        ff = self.management_info_fmt.parse(f.info[1:])
         print(ff)
         return ff
 

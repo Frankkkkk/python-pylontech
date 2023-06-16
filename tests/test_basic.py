@@ -382,28 +382,16 @@ def test_up2500_1module_status_info_parsing_1():
 
 def test_up2500_management_info():
     p = Pylontech([b"~20024600B014026EF05AA0022BFDD5C0F915\r"])
-    p.send_cmd(2, 0x92, b"02")
 
-    mgmt = construct.Struct(
-        "ChargeVoltageLimit" / DivideBy1000(construct.Int16sb),
-        "DischargeVoltageLimit" / DivideBy1000(construct.Int16sb),
-        "ChargeCurrentLimit" / ToAmp(construct.Int16sb),
-        "DischargeCurrentLimit" / ToAmp(construct.Int16sb),
-        "status"
-        / construct.BitStruct(
-            "ChargeEnable" / construct.Flag,
-            "DischargeEnable" / construct.Flag,
-            "ChargeImmediately2" / construct.Flag,
-            "ChargeImmediately1" / construct.Flag,
-            "FullChargeRequest" / construct.Flag,
-            "ShouldCharge"
-            / construct.Computed(
-                lambda this: this.ChargeImmediately2
-                | this.ChargeImmediately1
-                | this.FullChargeRequest
-            ),
-            "_padding" / construct.BitsInteger(3),
-        ),
-    )
-    f = p.read_frame()
-    print(mgmt.parse(f.info[1:]))
+    d = p.get_management_info(2)
+
+    assert d.ChargeVoltageLimit == 28.4
+    assert d.DischargeVoltageLimit == 23.2
+    assert d.ChargeCurrentLimit == 55.5
+    assert d.DischargeCurrentLimit == -55.5
+    assert d.status.ChargeEnable
+    assert d.status.DischargeEnable
+    assert not d.status.ChargeImmediately2
+    assert not d.status.ChargeImmediately1
+    assert not d.status.FullChargeRequest
+    assert not d.status.ShouldCharge
