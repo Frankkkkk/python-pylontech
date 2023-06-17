@@ -66,8 +66,8 @@ class Pylontech:
     )
 
     management_info_fmt = construct.Struct(
-        "ChargeVoltageLimit" / DivideBy1000(construct.Int16sb),
-        "DischargeVoltageLimit" / DivideBy1000(construct.Int16sb),
+        "ChargeVoltageLimit" / DivideBy1000(construct.Int16ub),
+        "DischargeVoltageLimit" / DivideBy1000(construct.Int16ub),
         "ChargeCurrentLimit" / ToAmp(construct.Int16sb),
         "DischargeCurrentLimit" / ToAmp(construct.Int16sb),
         "status"
