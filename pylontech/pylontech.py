@@ -141,7 +141,7 @@ class Pylontech:
     )
 
     def __init__(self, serial_port='/dev/ttyUSB0', baudrate=115200):
-        self.s = serial.Serial(serial_port, baudrate, bytesize=8, parity=serial.PARITY_NONE, stopbits=1, timeout=2)
+        self.s = serial.Serial(serial_port, baudrate, bytesize=8, parity=serial.PARITY_NONE, stopbits=1, timeout=2, exclusive=True)
 
 
     @staticmethod
